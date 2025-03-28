@@ -28,18 +28,22 @@ public class SecurityQuestionService {
 
     public ResponseEntity<Map<String,String>> addSecurityQuestions(List<SecurityQuestionDto> securityQuestionDto,Long itemId)
     {
-        //this all will be in register item function
-        //fist item will save then it will be mapped with the security question
+        // Fetch existing security questions for the item
+        List<SecurityQuestions> existingQuestions = securityQuestionRepository.findByItemId(itemId);
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName(); // Retrieves email of logged-in seller
 
-//        User user = userRepository.findByUsername(userEmail)
-//                .orElseThrow(() -> new RuntimeException("user not found"));
+        // Check for duplicates
+        for (SecurityQuestionDto dto : securityQuestionDto) {
+            boolean isDuplicate = existingQuestions.stream()
+                    .anyMatch(q -> q.getQuestion().equalsIgnoreCase(dto.getQuestion()) &&
+                            q.getAnswer().equalsIgnoreCase(dto.getAnswer()));
 
-//        // Fetch the Item by itemId
-//        Item item = itemRepository.findById(itemId)
-//                .orElseThrow(() -> new RuntimeException("Item not found with ID: " + itemId));
+            if (isDuplicate) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Duplicate question-answer pair already exists for this item");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
 
         List<SecurityQuestions> securityQuestionsList = securityQuestionDto.stream()
                 .map(dto -> SecurityQuestions.builder()

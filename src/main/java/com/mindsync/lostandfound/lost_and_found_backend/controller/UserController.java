@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/report-product")
-    public ResponseEntity<Map<String,String>> reportProduct(@RequestBody ItemDto itemDto)
+    public ResponseEntity<Map<String,Object>> reportProduct(@RequestBody ItemDto itemDto)
     {
         return itemService.reportProduct(itemDto);
     }

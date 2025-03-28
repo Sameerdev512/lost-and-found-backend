@@ -24,7 +24,7 @@ public class ItemService {
 
     private final UserRepository userRepository;
 
-    public ResponseEntity<Map<String,String>> reportProduct(ItemDto itemDto)
+    public ResponseEntity<Map<String,Object>> reportProduct(ItemDto itemDto)
     {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Retrieves email of logged-in seller
@@ -34,16 +34,17 @@ public class ItemService {
 
         // Assign role OWNER if status is lost
         if ("lost".equalsIgnoreCase(String.valueOf(itemDto.getStatus()))) {
-            if (!user.getRole().equals(Role.OWNER)) { // Prevent unnecessary updates
-                user.setRole(Role.OWNER);
+            if (!user.getRole().equals(Role.FINDER)) { // Prevent unnecessary updates
+                user.setRole(Role.FINDER);
                 userRepository.save(user); // Persist role change
             }
         }
 
         if(itemRepository.findByItemName(itemDto.getItemName()).isPresent())
         {
-            Map<String,String> response = new HashMap<>();
+            Map<String,Object> response = new HashMap<>();
             response.put("message","item already added");
+            response.put("item",itemDto);
 
             return ResponseEntity.ok(response);
         }
@@ -62,8 +63,9 @@ public class ItemService {
 
         itemRepository.save(item);
 
-        Map<String,String> response = new HashMap<>();
+        Map<String,Object> response = new HashMap<>();
         response.put("message","item added successfully");
+        response.put("details",item);
 
         return ResponseEntity.ok(response);
     }
