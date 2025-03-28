@@ -35,8 +35,6 @@ public class User implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
-
-
     @Override
     public String getPassword() {
         return password;
