@@ -32,7 +32,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+<<<<<<< HEAD
                         .requestMatchers("/api/user/**").hasAnyRole("USER","FINDER","OWNER","ADMIN")
+=======
+                        .requestMatchers("/api/finder/**").hasRole("FINDER")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER","OWNER","FINDER")
+                        .requestMatchers("/api/owner/**").hasRole("OWNER")
+>>>>>>> eb883b9ad09107b9f31a044c61ec6fe459d59f62
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
