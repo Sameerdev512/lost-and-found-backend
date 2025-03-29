@@ -29,16 +29,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // ✅ Enable CORS here
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-<<<<<<< HEAD
-                        .requestMatchers("/api/user/**").hasAnyRole("USER","FINDER","OWNER","ADMIN")
-=======
-                        .requestMatchers("/api/finder/**").hasRole("FINDER")
-                        .requestMatchers("/api/user/**").hasAnyRole("USER","OWNER","FINDER")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Ensure ROLE_ADMIN in DB
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "FINDER", "OWNER", "ADMIN")
+                        .requestMatchers("/api/finder/**").hasAnyRole("FINDER","USER","OWNER", "ADMIN")
                         .requestMatchers("/api/owner/**").hasRole("OWNER")
->>>>>>> eb883b9ad09107b9f31a044c61ec6fe459d59f62
+                        .requestMatchers("/api/otp/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,7 +61,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:5173")); // ✅ Allow frontend origin
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
+        config.setExposedHeaders(List.of("Authorization"));  // Expose JWT token if needed
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

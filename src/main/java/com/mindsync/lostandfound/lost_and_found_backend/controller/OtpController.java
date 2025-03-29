@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/otp")
+
+@CrossOrigin(origins="http://localhost:5173")
 @RequiredArgsConstructor
 public class OtpController {
 
@@ -20,15 +22,15 @@ public class OtpController {
         return ResponseEntity.ok("OTP Service is running.");
     }
 
-    @PostMapping("/sendOtp")
-    public ResponseEntity<OtpResponseDto> sendOtp(@RequestBody OtpRequestDto otpRequestDto) {
-        OtpResponseDto response = otpService.sendOtp(otpRequestDto);
+    @PostMapping("/sendOtp/{itemId}")
+    public ResponseEntity<OtpResponseDto> sendOtp(@RequestBody OtpRequestDto otpRequestDto,@PathVariable Long itemId) {
+        OtpResponseDto response = otpService.sendOtp(otpRequestDto,itemId);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/validateOtp")
-    public ResponseEntity<OtpResponseDto> validateOtp(@RequestBody OtpValidationRequestDto otpValidationRequestDto) {
-        OtpResponseDto validationResponse = otpService.validateOtp(otpValidationRequestDto);
-        return ResponseEntity.ok(validationResponse);
-    }
+//    @PostMapping("/validate-otp")
+//    public ResponseEntity<OtpResponseDto> validateOtp(@RequestBody OtpValidationRequestDto otpValidationRequestDto) {
+//        OtpResponseDto validationResponse = otpService.validateOtp(otpValidationRequestDto);
+//        return ResponseEntity.ok(validationResponse);
+//    }
 }

@@ -13,6 +13,8 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/finder/")
+
+@CrossOrigin(origins="http://localhost:5173")
 public class SecurityQuestionController {
 
     SecurityQuestionService securityQuestionService;
@@ -24,5 +26,7 @@ public class SecurityQuestionController {
 
         return securityQuestionService.addSecurityQuestions(securityQuestionDto, itemId);
     }
+
+
 
 }

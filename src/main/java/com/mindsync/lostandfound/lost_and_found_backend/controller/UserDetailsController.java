@@ -11,6 +11,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@CrossOrigin(origins="http://localhost:5173")
 public class UserDetailsController {
 
     private final UserDetailsService userDetailsService;

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class ItemService {
         User user = userRepository.findByUsername(userEmail)
                 .orElseThrow(() -> new RuntimeException("user not found"));
 
-        // Assign role OWNER if status is lost
+        // Assign role FINDER if status is lost
         if ("lost".equalsIgnoreCase(String.valueOf(itemDto.getStatus()))) {
             if (!user.getRole().equals(Role.FINDER)) { // Prevent unnecessary updates
                 user.setRole(Role.FINDER);
@@ -40,25 +42,35 @@ public class ItemService {
             }
         }
 
-        if(itemRepository.findByItemName(itemDto.getItemName()).isPresent())
-        {
-            Map<String,Object> response = new HashMap<>();
-            response.put("message","item already added");
-            response.put("item",itemDto);
+        // Assign role OWNER if status is lost
+        if ("found".equalsIgnoreCase(String.valueOf(itemDto.getStatus()))) {
+            if (!user.getRole().equals(Role.OWNER)) { // Prevent unnecessary updates
+                user.setRole(Role.OWNER);
+                userRepository.save(user); // Persist role change
+            }
+        }
+
+        if (itemRepository.findByItemNameAndStatus(itemDto.getItemName(), itemDto.getStatus()).isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Item with the same name and status already exists");
+            response.put("item", itemDto);
 
             return ResponseEntity.ok(response);
         }
+
+
 
 
         Item item = Item.builder()
                 .itemName(itemDto.getItemName())
                 .itemDescription(itemDto.getItemDescription())
                 .category(itemDto.getCategory())
-                .status(itemDto.getStatus())
+                .status("Pending")
                 .location(itemDto.getLocation())
                 .date(itemDto.getDate())
                 .createdAt(LocalDateTime.now())
                 .user(user)
+                .reportType(itemDto.getReportType())
                 .build();
 
         itemRepository.save(item);
@@ -69,4 +81,25 @@ public class ItemService {
 
         return ResponseEntity.ok(response);
     }
+
+    public List<ItemDto> getAllItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Retrieves email of logged-in seller
+
+        User user = userRepository.findByUsername(userEmail)
+                .orElseThrow(() -> new RuntimeException("user not found"));
+
+        return itemRepository.findItemsByUserId(user.getId());
+    }
+
+    public List<Item> getAllTheItems() {
+        return itemRepository.findAll(); // Fetch all items from the database
+    }
+
+    public String deleteItem(Long id) {
+        itemRepository.deleteById(id);
+        return "deleted successfully";
+    }
+    // Utility method to convert entity to DTO
+
 }

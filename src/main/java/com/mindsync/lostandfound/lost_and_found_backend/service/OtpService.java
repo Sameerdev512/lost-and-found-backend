@@ -3,8 +3,10 @@ package com.mindsync.lostandfound.lost_and_found_backend.service;
 import com.mindsync.lostandfound.lost_and_found_backend.dto.OtpRequestDto;
 import com.mindsync.lostandfound.lost_and_found_backend.dto.OtpResponseDto;
 import com.mindsync.lostandfound.lost_and_found_backend.dto.OtpValidationRequestDto;
+import com.mindsync.lostandfound.lost_and_found_backend.entity.Item;
 import com.mindsync.lostandfound.lost_and_found_backend.entity.Otp;
 import com.mindsync.lostandfound.lost_and_found_backend.entity.User;
+import com.mindsync.lostandfound.lost_and_found_backend.repository.ItemRepository;
 import com.mindsync.lostandfound.lost_and_found_backend.repository.OtpRepository;
 import com.mindsync.lostandfound.lost_and_found_backend.repository.UserRepository;
 import com.mindsync.lostandfound.lost_and_found_backend.utils.OtpGenerator;
@@ -25,6 +27,7 @@ public class OtpService {
     private final OtpRepository otpRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final ItemRepository itemRepository;
 
     @Value("${otp.expiration.minutes:5}") // Default OTP expiration time is 5 minutes
     private int otpExpirationMinutes;
@@ -32,7 +35,7 @@ public class OtpService {
     /**
      * ✅ Sends an OTP to the registered user's email.
      */
-    public OtpResponseDto sendOtp(OtpRequestDto otpRequestDto) {
+    public OtpResponseDto sendOtp(OtpRequestDto otpRequestDto,Long itemId) {
         try {
             // Check if user exists with the given email
             User user = userRepository.findByUsername(otpRequestDto.getEmail())
@@ -46,8 +49,10 @@ public class OtpService {
             Otp newOtp = Otp.builder()
                     .user(user) // Associate OTP with the User entity
                     .otpCode(otp)
+                    .itemId(itemId)
+                    .email(otpRequestDto.getEmail())
                     .generatedAt(LocalDateTime.now())
-                    .expirationTime(LocalDateTime.now().plusMinutes(otpExpirationMinutes))
+                    .expirationTime(LocalDateTime.now().plusHours(24))
                     .isUsed(false)
                     .build();
 
@@ -75,19 +80,18 @@ public class OtpService {
     /**
      * ✅ Validates the OTP entered by the user.
      */
-    public OtpResponseDto validateOtp(OtpValidationRequestDto otpValidationRequestDto) {
+    public OtpResponseDto validateOtp(Long itemId, OtpValidationRequestDto otpValidationRequestDto) {
+        System.out.println("in otp service");
         try {
-            // Find user by email
-            User user = userRepository.findByUsername(otpValidationRequestDto.getEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found with email: " + otpValidationRequestDto.getEmail()));
-
-            // Fetch the most recent unused OTP for the user
-            Optional<Otp> optionalOtp = otpRepository.findTopByUserAndIsUsedFalseOrderByGeneratedAtDesc(user);
+            // Fetch the most recent unused OTP for the given item
+            Optional<Otp> optionalOtp = otpRepository.findTopByItemIdAndOtpCodeAndIsUsedFalseOrderByGeneratedAtDesc(
+                    itemId, otpValidationRequestDto.getOtpCode()
+            );
 
             if (optionalOtp.isEmpty()) {
                 return OtpResponseDto.builder()
                         .statusCode(400)
-                        .responseMessage("No OTP found for the given email.")
+                        .responseMessage("Invalid or expired OTP for this item.")
                         .isOtpValid(false)
                         .build();
             }
@@ -104,26 +108,25 @@ public class OtpService {
                         .build();
             }
 
-            // Validate OTP (using Objects.equals to prevent NullPointerException)
-            if (!Objects.equals(otpValidationRequestDto.getOtpCode(), otp.getOtpCode())) {
-                return OtpResponseDto.builder()
-                        .statusCode(400)
-                        .responseMessage("Invalid OTP.")
-                        .isOtpValid(false)
-                        .build();
-            }
-
             // Mark OTP as used
             otp.setUsed(true);
             otpRepository.save(otp);
 
+            // Update item status to 'Returned'
+            Optional<Item> optionalItem = itemRepository.findById(itemId);
+            if (optionalItem.isPresent()) {
+                Item item = optionalItem.get();
+                item.setStatus("Returned");
+                itemRepository.save(item);
+            }
+
             return OtpResponseDto.builder()
                     .statusCode(200)
-                    .responseMessage("OTP validated successfully.")
+                    .responseMessage("OTP validated successfully. Item marked as returned.")
                     .isOtpValid(true)
                     .build();
         } catch (Exception e) {
-            log.error("Error occurred while validating OTP for {}: {}", otpValidationRequestDto.getEmail(), e.getMessage(), e);
+            log.error("Error occurred while validating OTP for item {}: {}", itemId, e.getMessage(), e);
             return OtpResponseDto.builder()
                     .statusCode(500)
                     .responseMessage("Failed to validate OTP.")
@@ -131,4 +134,5 @@ public class OtpService {
                     .build();
         }
     }
+
 }

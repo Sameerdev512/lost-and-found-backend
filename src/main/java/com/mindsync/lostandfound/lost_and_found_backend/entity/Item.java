@@ -29,6 +29,8 @@ public class Item {
 
     private LocalDateTime createdAt;
 
+    private String reportType;
+
     @ManyToOne
     @JoinColumn(name = "user_id") // This should match the query
     @JsonBackReference

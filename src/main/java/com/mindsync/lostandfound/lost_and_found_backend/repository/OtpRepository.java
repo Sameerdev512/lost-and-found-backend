@@ -9,7 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface OtpRepository extends JpaRepository<Otp, Long> {
-    Optional<Otp> findTopByEmailAndIsUsedFalseOrderByGeneratedAtDesc(String email);
+    Optional<Otp> findTopByItemIdAndOtpCodeAndIsUsedFalseOrderByGeneratedAtDesc(Long itemId, String otpCode);
 
-    Optional<Otp> findTopByUserAndIsUsedFalseOrderByGeneratedAtDesc(User user);
+    Otp findByEmail(String email);
 }
+
+
+
+

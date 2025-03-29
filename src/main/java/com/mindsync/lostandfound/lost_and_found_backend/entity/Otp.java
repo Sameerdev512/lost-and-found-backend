@@ -26,8 +26,6 @@ public class Otp {
 
 
     private Long itemId;  // Sent from frontend by scanning QR
-
-
     private Long finderId;  // Finder ID retrieved from item table
 
     private String email;
