@@ -73,7 +73,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>11.2.2.jre8</version> <!-- Ensure this is up to date -->
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
