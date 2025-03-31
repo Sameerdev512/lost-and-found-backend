@@ -36,7 +36,10 @@ public class ItemService {
 
         // Assign role FINDER if status is lost
         if ("lost".equalsIgnoreCase(String.valueOf(itemDto.getStatus()))) {
-            if (!user.getRole().equals(Role.FINDER)) { // Prevent unnecessary updates
+            if (user.getRole().equals(Role.FINDER) ||user.getRole().equals(Role.OWNER) ) { // Prevent unnecessary updates
+                user.setRole(Role.BOTH);
+                userRepository.save(user); // Persist role change
+            }else{
                 user.setRole(Role.FINDER);
                 userRepository.save(user); // Persist role change
             }
@@ -44,7 +47,10 @@ public class ItemService {
 
         // Assign role OWNER if status is lost
         if ("found".equalsIgnoreCase(String.valueOf(itemDto.getStatus()))) {
-            if (!user.getRole().equals(Role.OWNER)) { // Prevent unnecessary updates
+            if (user.getRole().equals(Role.FINDER) ||user.getRole().equals(Role.OWNER) ) { // Prevent unnecessary updates
+                user.setRole(Role.BOTH);
+                userRepository.save(user); // Persist role change
+            }else{
                 user.setRole(Role.OWNER);
                 userRepository.save(user); // Persist role change
             }
@@ -69,6 +75,7 @@ public class ItemService {
                 .location(itemDto.getLocation())
                 .date(itemDto.getDate())
                 .createdAt(LocalDateTime.now())
+                .finderOrOwnerName(user.getName())
                 .user(user)
                 .reportType(itemDto.getReportType())
                 .build();
@@ -99,6 +106,16 @@ public class ItemService {
     public String deleteItem(Long id) {
         itemRepository.deleteById(id);
         return "deleted successfully";
+    }
+
+    public List<Item> getAllClaimedItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Retrieves email of logged-in seller
+
+        User user = userRepository.findByUsername(userEmail)
+                .orElseThrow(() -> new RuntimeException("user not found"));
+
+        return itemRepository.findByClaimedUserId(user.getId());
     }
     // Utility method to convert entity to DTO
 

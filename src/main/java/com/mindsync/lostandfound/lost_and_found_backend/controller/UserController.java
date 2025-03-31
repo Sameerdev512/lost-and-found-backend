@@ -38,11 +38,7 @@ public class UserController {
         return itemService.reportProduct(itemDto);
     }
 
-    @GetMapping("/get-all-items")
-    public List<ItemDto> getAllItems()
-    {
-        return itemService.getAllItems();
-    }
+
 
     @GetMapping("/get-all-questions/{itemId}")
     public List<SecurityQuestions> getAllQuestions(@PathVariable Long itemId) {
@@ -60,9 +56,5 @@ public class UserController {
         return ResponseEntity.ok(items);
     }
 
-    @DeleteMapping("/delete-item/{id}")
-    public String deleteItem(@PathVariable Long id)
-    {
-        return itemService.deleteItem(id);
-    }
+
 }

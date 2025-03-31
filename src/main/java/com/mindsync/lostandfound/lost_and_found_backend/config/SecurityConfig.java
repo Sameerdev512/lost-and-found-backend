@@ -33,9 +33,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Ensure ROLE_ADMIN in DB
-                        .requestMatchers("/api/user/**").hasAnyRole("USER", "FINDER", "OWNER", "ADMIN")
-                        .requestMatchers("/api/finder/**").hasAnyRole("FINDER","USER","OWNER", "ADMIN")
-                        .requestMatchers("/api/owner/**").hasRole("OWNER")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "FINDER","BOTH","OWNER", "ADMIN")
+                        .requestMatchers("/api/finder/**").hasAnyRole("FINDER","BOTH","OWNER", "ADMIN")
+                        .requestMatchers("/api/owner/**").hasAnyRole("OWNER","FINDER","BOTH", "ADMIN")
                         .requestMatchers("/api/otp/**").permitAll()
                         .anyRequest().authenticated()
                 )

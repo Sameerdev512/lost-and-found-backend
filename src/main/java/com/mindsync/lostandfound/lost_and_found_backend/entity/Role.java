@@ -4,5 +4,6 @@ public enum Role {
     USER,
     FINDER,
     OWNER,
-    ADMIN
+    ADMIN,
+    BOTH
 }
