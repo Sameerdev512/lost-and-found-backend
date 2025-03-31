@@ -17,6 +17,5 @@ public interface SecurityQuestionRepository extends JpaRepository<SecurityQuesti
     List<SecurityQuestions> findByItemId(Long itemId);
 
 
-
-
+    List<SecurityQuestions> findAllByItemId(Long itemId);
 }

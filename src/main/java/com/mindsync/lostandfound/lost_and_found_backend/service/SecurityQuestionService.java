@@ -156,4 +156,8 @@ public class SecurityQuestionService {
         response.put("message", message);
         return ResponseEntity.ok(response);
     }
+
+    public List<SecurityQuestions> getItemSecurityQuestions(Long itemId) {
+        return securityQuestionRepository.findAllByItemId(itemId);
+    }
 }
