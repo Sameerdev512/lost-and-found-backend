@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ItemDto {
-    private Long id; // ✅ Ensure this is Long, not int
+    private Long id;
     private String itemName;
     private String itemDescription;
     private String status;
@@ -16,16 +16,18 @@ public class ItemDto {
     private LocalDateTime date;
     private LocalDateTime createdAt;
     private String reportType;
-    private Long claimedUserId; // ✅ Allow nullable Long
+    private Long claimedUserId;
     private String finderOrOwnerName;
     private String claimedUserName;
     private LocalDateTime claimedAt;
+    private Long userId; // New field for the item owner's ID
 
-    // ✅ Constructor that matches JPQL query
+    // Updated constructor
     public ItemDto(Long id, String itemName, String itemDescription, String status,
                    String category, String location, LocalDateTime date,
-                   LocalDateTime createdAt, String reportType,
-                   Long claimedUserId, String finderOrOwnerName,String claimedUserName,LocalDateTime claimedAt) {
+                   LocalDateTime createdAt, String reportType, Long claimedUserId,
+                   String finderOrOwnerName, String claimedUserName,
+                   LocalDateTime claimedAt, Long userId) {
         this.id = id;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
@@ -39,5 +41,6 @@ public class ItemDto {
         this.finderOrOwnerName = finderOrOwnerName;
         this.claimedUserName = claimedUserName;
         this.claimedAt = claimedAt;
+        this.userId = userId; // Initialize the new field
     }
 }

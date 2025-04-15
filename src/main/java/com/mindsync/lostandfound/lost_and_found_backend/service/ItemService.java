@@ -108,7 +108,7 @@ public class ItemService {
         return "deleted successfully";
     }
 
-    public List<Item> getAllClaimedItems() {
+    public List<ItemDto> getAllClaimedItems() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Retrieves email of logged-in seller
 

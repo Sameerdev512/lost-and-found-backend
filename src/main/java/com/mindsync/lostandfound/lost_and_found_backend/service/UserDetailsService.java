@@ -94,6 +94,7 @@ public class UserDetailsService {
         // Debugging: Print received DTO
         System.out.println("Received DTO: " + userDetailsDto);
 
+        //four lines to get the logged-in user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Retrieves email of logged-in user
 
@@ -106,10 +107,13 @@ public class UserDetailsService {
 
         // Set user details
         userDetails.setUser(user);
-        userDetails.setFullName(userDetailsDto.getFullName());
+        userDetails.setFirstName(userDetailsDto.getFirstName());
+        userDetails.setLastName(userDetailsDto.getLastName());
+        userDetails.setEmail(user.getUsername());
         userDetails.setPhone(userDetailsDto.getPhone());
         userDetails.setAddress(userDetailsDto.getAddress());
         userDetails.setCity(userDetailsDto.getCity());
+        userDetails.setDepartment(userDetailsDto.getDepartment());
         userDetails.setState(userDetailsDto.getState());
 
         // Debugging: Print entity before saving
@@ -120,10 +124,25 @@ public class UserDetailsService {
 
         // Prepare response
         Map<String, String> response = new HashMap<>();
-        response.put("status", "ok");
         response.put("message", "User details updated successfully.");
 
         return ResponseEntity.ok(response);
+    }
+
+
+    public UserDetails getLoggedInUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Retrieves email of logged-in user
+
+        User user = userRepository.findByUsername(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return userDetailsRepository.findByUserId(user.getId());
+    }
+
+
+    public UserDetails getUserDetails(Long userId) {
+        return userDetailsRepository.findByUserId(userId);
     }
 }
 

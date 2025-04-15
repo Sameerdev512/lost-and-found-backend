@@ -12,10 +12,12 @@ import lombok.*;
 @Builder
 //@ToString
 public class UserDetailsDto {
+    private Long userDetailsId;
 
     @NotBlank(message = "Full name cannot be empty")
-    @Size(min = 3, max = 50, message = "Full name must be between 3 and 50 characters")
-    private String fullName;
+    private String firstName;
+
+    private String lastName;
 
     @NotBlank(message = "Phone number cannot be empty")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
@@ -25,5 +27,9 @@ public class UserDetailsDto {
 
     private String city;
 
+    private String email;
+
     private String state;
+
+    private String department;
 }

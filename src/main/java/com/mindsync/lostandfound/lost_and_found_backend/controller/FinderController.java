@@ -43,7 +43,7 @@ public class FinderController {
     }
 
     @GetMapping("/get-all-claimed-items")
-    public List<Item> getAllClaimedItems()
+    public List<ItemDto> getAllClaimedItems()
     {
         return itemService.getAllClaimedItems();
     }

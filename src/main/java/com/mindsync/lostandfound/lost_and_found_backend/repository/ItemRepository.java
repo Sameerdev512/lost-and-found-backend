@@ -16,7 +16,7 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
     @Query("SELECT new com.mindsync.lostandfound.lost_and_found_backend.dto.ItemDto(" +
             "i.id, i.itemName, i.itemDescription, i.status, i.category, i.location, " +
             "i.date, i.createdAt, i.reportType, i.claimedUserId, i.finderOrOwnerName, " +
-            "i.claimedUserName, i.claimedAt) " +  // ✅ Corrected order
+            "i.claimedUserName, i.claimedAt,i.user.id) " +  // ✅ Corrected order
             "FROM Item i WHERE i.user.id = :userId")
     List<ItemDto> findItemsByUserId(@Param("userId") Long userId);
 
@@ -26,5 +26,10 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
     Item findByItemId(Long itemId);
 
     // Find all items where claimedUserId matches the provided ID
-    List<Item> findByClaimedUserId(Long claimedUserId);
+    @Query("SELECT new com.mindsync.lostandfound.lost_and_found_backend.dto.ItemDto(" +
+            "i.id, i.itemName, i.itemDescription, i.status, i.category, i.location, " +
+            "i.date, i.createdAt, i.reportType, i.claimedUserId, i.finderOrOwnerName, " +
+            "i.claimedUserName, i.claimedAt,i.user.id) " +  // ✅ Corrected order
+            "FROM Item i WHERE i.claimedUserId = :claimedUserId")
+    List<ItemDto> findByClaimedUserId(@Param("claimedUserId") Long claimedUserId);
 }
