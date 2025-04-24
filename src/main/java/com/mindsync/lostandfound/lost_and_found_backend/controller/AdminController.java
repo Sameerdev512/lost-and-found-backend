@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins="http://localhost:5173")
 public class AdminController {
 
+//    get admin dashboard
     @GetMapping("/dashboard")
     public String getAdminDashboard() {
         return "Admin dashboard data";
