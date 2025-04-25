@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/finder")
 @RequiredArgsConstructor
-@CrossOrigin(origins="http://localhost:5173")
 public class FinderController {
     public OtpService otpService;
     final ItemService itemService;
