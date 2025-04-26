@@ -8,7 +8,9 @@ import com.mindsync.lostandfound.lost_and_found_backend.service.ItemService;
 import com.mindsync.lostandfound.lost_and_found_backend.service.SecurityQuestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +34,15 @@ public class UserController {
     }
 
     @PostMapping("/report-product")
-    public ResponseEntity<Map<String,Object>> reportProduct(@RequestBody ItemDto itemDto)
-    {
-        return itemService.reportProduct(itemDto);
+    public ResponseEntity<Map<String,Object>> reportProduct(@RequestParam("name") String name,
+                                                            @RequestParam("description") String description,
+                                                            @RequestParam("status") String status,
+                                                            @RequestParam("category") String category,
+                                                            @RequestParam("reportType") String reportType,
+                                                            @RequestParam("location") String location,
+                                                            @RequestParam("date") String date,
+                                                            @RequestParam("imageUrl") MultipartFile imageUrl) throws IOException {
+        return itemService.reportProduct(name,description,status,category,reportType,location,imageUrl,date);
     }
 
 

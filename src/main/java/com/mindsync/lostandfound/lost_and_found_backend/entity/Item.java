@@ -37,6 +37,7 @@ public class Item {
 
     private String claimedUserName;
     private LocalDateTime claimedAt;
+    String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id") // This should match the query

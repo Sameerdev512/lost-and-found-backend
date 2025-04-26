@@ -21,13 +21,14 @@ public class ItemDto {
     private String claimedUserName;
     private LocalDateTime claimedAt;
     private Long userId; // New field for the item owner's ID
+    private String imageUrl;
 
     // Updated constructor
     public ItemDto(Long id, String itemName, String itemDescription, String status,
                    String category, String location, LocalDateTime date,
                    LocalDateTime createdAt, String reportType, Long claimedUserId,
                    String finderOrOwnerName, String claimedUserName,
-                   LocalDateTime claimedAt, Long userId) {
+                   LocalDateTime claimedAt, Long userId,String imageUrl) {
         this.id = id;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
@@ -42,5 +43,6 @@ public class ItemDto {
         this.claimedUserName = claimedUserName;
         this.claimedAt = claimedAt;
         this.userId = userId; // Initialize the new field
+        this.imageUrl = imageUrl;
     }
 }

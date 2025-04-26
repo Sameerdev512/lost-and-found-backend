@@ -16,7 +16,7 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
     @Query("SELECT new com.mindsync.lostandfound.lost_and_found_backend.dto.ItemDto(" +
             "i.id, i.itemName, i.itemDescription, i.status, i.category, i.location, " +
             "i.date, i.createdAt, i.reportType, i.claimedUserId, i.finderOrOwnerName, " +
-            "i.claimedUserName, i.claimedAt,i.user.id) " +  // ✅ Corrected order
+            "i.claimedUserName, i.claimedAt,i.user.id,i.imageUrl) " +  // ✅ Corrected order
             "FROM Item i WHERE i.user.id = :userId")
     List<ItemDto> findItemsByUserId(@Param("userId") Long userId);
 
